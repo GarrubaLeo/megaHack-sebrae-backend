@@ -1,5 +1,6 @@
 // Update with your config settings.
 require('dotenv').config();
+const path = require('path')
 
 module.exports = {
 
@@ -14,8 +15,12 @@ module.exports = {
     },
 
     migrations: {
-      directory: './src/database/migrations'
+      directory: path.resolve(__dirname, 'src', 'database', 'migrations')
     },
+
+    seeds: {
+      directory: path.resolve(__dirname, 'src', 'database', 'seeds')
+    }
 
   },
 
