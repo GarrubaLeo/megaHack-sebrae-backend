@@ -2,14 +2,13 @@ const connection = require('../database/connection');
 
 module.exports = {
     async create(request, response, next) {
-        const { 
+        const {
             cnpj,
             name,
             latitude,
             longitude,
             uf,
             city,
-            precautions
         } = request.body;
 
         try {
@@ -27,14 +26,14 @@ module.exports = {
 
             await trx('restaurants').insert(restaurantData);
 
-            const precautionRegister = precautions.map((precaution) => {
-                return {
-                    restaurant_cnpj: cnpj,
-                    precaution_id: precaution
-                }
-            });
+            // const precautionRegister = precautions.map((precaution) => {
+            //     return {
+            //         restaurant_cnpj: cnpj,
+            //         precaution_id: Number(precaution)
+            //     }
+            // });
 
-            await trx('restaurants_precautions').insert(precautionRegister);
+            // await trx('restaurants_precautions').insert(precautionRegister);
 
             await trx.commit();
 
@@ -63,13 +62,18 @@ module.exports = {
 
             return response.json({ restaurant, precautions });
         } catch (error) {
-            next(error)
+            next(error);
         }
     },
 
     async index(request, response) {
-        const restaurants = await connection('restaurants').select('*');
+        const { city, uf } = request.query;
 
-        return response.json(restaurants);
+        const restaurants = await connection('restaurants')
+            .where('city', city)
+            .where('uf', uf)
+            .distinct();
+
+        response.status(200).json(restaurants);
     }
 }
