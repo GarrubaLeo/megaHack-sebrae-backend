@@ -25,7 +25,7 @@ module.exports = {
                         name: user[0].name,
                         email: user[0].email,
                         cpf: user[0].cpf
-                    }, process.env.JWT_TOKEN, { expiresIn: '7d' });
+                    }, process.env.JWT_KEY, { expiresIn: '7d' });
 
                     return response.status(200).json({ message: 'Autenticado com sucesso', token });
                 }
