@@ -21,5 +21,7 @@ router.get('/users', Login, Users.index);
 router.post('/login', Authentication.authentication);
 
 router.post('/schedules/:cnpj', Login, Schedules.create);
+router.get('/schedules/user', Login, Schedules.showSchedulesUser);
+router.get('/schedules/restaurant/:cnpj', Schedules.showSchedulesRestaurant);
 
 module.exports = router;
