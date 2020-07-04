@@ -1,5 +1,6 @@
 const connection = require('../database/connection');
 const bcrypt = require('bcrypt');
+const Login = require('../middlewares/Login');
 
 module.exports = {
     async create(request, response, next) {
@@ -26,6 +27,18 @@ module.exports = {
 
         } catch (error) {
             next(error);
+        }
+    },
+
+    async index(request, response, next) {
+        console.log(request.user.id_user);
+
+        try {
+            const users = await connection('users').select('*');
+
+            return response.status(200).json(users);
+        } catch (error) {
+            next(error)
         }
     }
 }
