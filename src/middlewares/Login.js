@@ -10,10 +10,7 @@ module.exports = (request, response, next) => {
             process.env.JWT_KEY
         );
 
-        request.id = decode.id;
-        request.user = decode.name;
-        request.email = decode.email;
-        request.cpf = decode.cpf;
+        request.user = decode;
 
         next();
     } catch (error) {
