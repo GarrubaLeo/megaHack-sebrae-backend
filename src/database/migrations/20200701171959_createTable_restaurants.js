@@ -4,8 +4,8 @@ exports.up = function(knex) {
       table.string('cnpj', [14]).primary().notNullable(),
       table.string('image').notNullable(),
       table.string('name').notNullable(),
-      table.string('latitude').notNullable(),
-      table.string('longitude').notNullable(),
+      table.decimal('latitude', null).notNullable(),
+      table.decimal('longitude', null).notNullable(),
       table.string('uf').notNullable(),
       table.string('city').notNullable();
   })
