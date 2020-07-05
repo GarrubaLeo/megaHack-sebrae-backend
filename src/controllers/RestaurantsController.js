@@ -1,4 +1,5 @@
 const connection = require('../database/connection');
+const { search } = require('../routes');
 
 module.exports = {
     async create(request, response, next) {
@@ -17,7 +18,7 @@ module.exports = {
             const restaurantData = {
                 cnpj,
                 name,
-                image: 'image-fake',
+                image: request.file.filename,
                 latitude,
                 longitude,
                 uf,
@@ -25,15 +26,6 @@ module.exports = {
             };
 
             await trx('restaurants').insert(restaurantData);
-
-            // const precautionRegister = precautions.map((precaution) => {
-            //     return {
-            //         restaurant_cnpj: cnpj,
-            //         precaution_id: Number(precaution)
-            //     }
-            // });
-
-            // await trx('restaurants_precautions').insert(precautionRegister);
 
             await trx.commit();
 
@@ -58,7 +50,7 @@ module.exports = {
             const precautions = await connection('precautions')
                 .join('restaurants_precautions', 'restaurants_precautions.id', '=', 'precautions.id')
                 .where('restaurants_precautions.restaurant_cnpj', cnpj)
-                .select('title');
+                .select('title', 'image');
 
             return response.json({ restaurant, precautions });
         } catch (error) {
@@ -66,14 +58,29 @@ module.exports = {
         }
     },
 
-    async index(request, response) {
-        const { city, uf } = request.query;
+    async indexLocalization(request, response) {
+        const { city } = request.query;
 
         const restaurants = await connection('restaurants')
             .where('city', city)
-            .where('uf', uf)
             .distinct();
 
         response.status(200).json(restaurants);
-    }
+    },
+
+    async index(request, response, next) {
+
+        const { name } = request.query;
+
+        try {
+            const restaurants = await connection('restaurants')
+                .where('name', 'like', '%' + name + '%')
+                .select('*');
+
+            return response.status(200).json(restaurants);
+        } catch (error) {
+            next(error);
+        }
+
+    },
 }
